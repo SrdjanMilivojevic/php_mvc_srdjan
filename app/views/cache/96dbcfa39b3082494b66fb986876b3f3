@@ -1,0 +1,22 @@
+<?php $__env->startSection('content'); ?>
+<div class="containder">
+	<div class="jumbotron">
+		<h1 class="text-center"> <?php echo e(isset($note) ? $note : ''); ?></h1>
+		<h2 class="text-center">
+		<?php echo e(isset($param) ? 'Param: ' . $param : ''); ?>
+
+		</h2>
+	</div>
+	<?php foreach($users->collection as $user): ?>
+		<p><?php echo e($user->id); ?></p><br>
+	<?php endforeach; ?>
+
+	<div class="well">
+		<p><?php echo $users->links; ?></p>
+	</div>
+	<?php echo flash(); ?>
+
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts/app', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

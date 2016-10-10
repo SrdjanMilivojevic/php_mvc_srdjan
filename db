@@ -1,0 +1,75 @@
+#!/usr/bin/env php
+<?php
+
+define('BASE_PATH', __DIR__ . '/');
+
+require BASE_PATH . 'vendor/autoload.php';
+require_once BASE_PATH . 'config/database.php';
+
+
+final class MigrateEngine 
+{
+
+    const MIGRATIONS = BASE_PATH . 'database/migrations/*.php';
+    const SEEDS = BASE_PATH . 'database/seeds/*.php';
+
+    private $args;
+
+    public function __construct($args) 
+    {
+        $this->args = $args;
+        $this->run();
+    }
+
+    private function help() 
+    {
+        echo PHP_EOL . "usage: php " . $this->args[0] . " <command> [<args>]n" . PHP_EOL . PHP_EOL;
+    }
+
+    private function run() 
+    {
+        if (count($this->args) <= 1) {
+            $this->help();
+        } else {
+            if ($this->args[1] === "migrate") {
+                $this->runMigrations();
+                if (isset($this->args[2]) && $this->args[2] === "--seed") {
+                    $this->runSeeders();
+                }
+            } else if ($this->args[1] === "seed") {
+                $this->runSeeders();
+            } else if ($this->args[1] === "help" || $this->args[1] === "--help" || $this->args[1] === "-h" || $this->args[1] === "--h") {
+                $this->help();
+            }
+        }
+    }
+
+    private function runMigrations() 
+    {
+        $files = glob(self::MIGRATIONS);
+        foreach ($files as $file) {
+            require_once($file);
+            $class = basename($file, '.php');
+            $migration = new $class;
+            $migration->run();
+
+            echo chr(27) . "[42m" . 'Successfully migrated ' . $class . ' !' . chr(27) . "[0m" . PHP_EOL;
+        }
+    }
+
+    private function runSeeders()
+    {
+        $files = glob(self::SEEDS);
+        foreach ($files as $file) {
+            require_once($file);
+            $class = basename($file, '.php');
+            $seeder = new $class;
+            $seeder->run();
+
+            echo chr(27) . "[43m" . 'Successfully seeded ' .$class .' !'. chr(27) . "[0m" . PHP_EOL;
+        }
+    }
+}
+
+$migrate = new MigrateEngine($argv);
+?>

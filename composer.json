@@ -1,0 +1,10 @@
+{
+    "require": {
+        "illuminate/database": "4.1.*",
+        "xiaoler/blade": "^0.2.2"
+
+    },
+    "autoload": {
+		"classmap": ["app/controllers", "app/models", "database/", "system/services/", "system/core/"]
+    }
+}
